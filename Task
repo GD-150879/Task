@@ -1,0 +1,335 @@
+<!Doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs .cloudflare.com/ajax/libs/twitter-bootstrap/3. p/3.3.7/css/bootstrap.min.css" />
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <style>
+        .form-control {
+            margin-top: 7px;
+            width: 50%;
+        }
+
+        .table {
+            margin-top: 5%;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>Inventory Management System</h3>
+
+    <button style="margin: 2%" type="button" class="btn btn-primary" onclick=" adddata()">
+
+        Add Data
+
+    </button>
+
+    <button style="margin: 2%" type="button" class="btn btn-primary" onclick="edit()">
+
+        Edit Data
+
+    </button>
+
+    <button style="margin: 2%" type="button" class="btn btn-primary" data-toggle="" id="btnDelete" onclick=" getSelectedRows()">
+
+        Delete Data
+
+    </button>
+
+    <!-- Modal add -->
+
+    <div id="ModalLoginForm" class="modal fade">
+
+        <div class="modal-dialog" role="document">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h1 class="modal-title">Add Credentials</h1>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <form role="form" method="POST" action="">
+                        <input type="hidden" name=" " _token" value="">
+                        <div class="form-group">
+
+                            <label class="control-label">Name</label>
+
+                            <div>
+                                <input type="text" name="name" class="form-control" required="" id="name1" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="control-label">QTY</label>
+
+                            <div>
+                                <input type="number" name="qty" class="form-control" required="" id="qty1" />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label class="control-label">Price</label>
+
+                            <div>
+                                <input type="number" name="price" class="form-control" required="" id="price1" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="control-label">E-Mail Address</label>
+
+                            <div>
+
+                                <input type="email" class="form-control" name="email" value="" id="email1" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <div>
+
+                                <button type="submit" id="submit1" class="btn btn-primary">Submit</button>
+                                <button type="button" id="update1" class="btn btn-success" style="display:none" onclick="updatedata()">Update</button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div><!-- /.modal-content -->
+
+        </div><!--/.modal-dialog -->
+
+    </div>
+
+    <!--/.modal -->
+    <input type="hidden" id="hdnRows" value="1" />
+    <table class="table table-bordered data-table">
+
+        <thead style="background-color:lightgrey; color: black;">
+            <tr>
+                <td> <input type="checkbox" /> Select</td>
+
+                <td>Name</td>
+
+                <td> QTY</td>
+
+                <td> price</td>
+
+                <td> Email</td>
+
+                <td width="200px">Total Price</td>
+            </tr>
+        </thead>
+
+        <tbody>
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <td></td>
+
+                <td> </td>
+
+                <td id="totalqty1"> </td>
+
+                <td id="totalprice1"></td>
+
+                <td align="right">Total Price</td>
+
+                <td width="200px" id="totaltotalprice"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+
+    <script type="text/javascript">var trid = 0;
+
+        function sum_qty_price(thiss,type,id) {
+            var row = $(thiss).closest('tr').attr('id');
+            var qty = 0;
+            var price = 0;
+
+            if (type == 'qty') {
+                qty = $(thiss).val();
+                price = $("#price_" + id).val();
+            }
+            if (type == 'price') {
+                price = $(thiss).val();
+                qty = $("#qty_" + id).val();
+            }
+
+            var total = price * qty;
+
+            $("#" + row ).find("td").eq(5).text(total);
+
+            //var qty = $(thiss).val();
+            //var price = $(thiss).val();
+
+
+            totalsum();
+        }
+
+        function adddata() {
+
+
+
+            $("#submit1").show();
+            $("#update1").hide();
+
+            $("#name1").val("");
+            $("#qty1").val("");
+            $("#price1").val("");
+            $("#email1").val("");
+
+            $("#ModalLoginForm").modal("show");
+        }
+
+        $("form").submit(function (e) {
+            e.preventDefault();
+
+            var name = $("input[name='name']").val();
+
+            var qty = $("input[name='qty']").val();
+
+            var price = $("input[name='price']").val();
+
+            var email = $("input[name='email']").val();
+
+            var totalprice = parseInt(qty) * parseInt(price);
+
+
+            $(".data-table tbody").append("<tr id= 'row_" + trid + "'> <td><input type='checkbox' id='' class='checkBoxClass' name='checkBoxClass' value='${value}'/> </td><td> " + name + "</td><td> <input name='qty' type='number'id= 'qty_" + trid + "' value='" + qty + "' onchange='sum_qty_price(this,`qty`," + trid + ")'/></td> <td><input name='qty' type='number' id= 'price_" + trid + "' value='" + price + "' onchange='sum_qty_price(this,`price`," + trid +")'/> </td> <td>" + email + "</td> <td>" + totalprice + "</td> </tr>");
+
+
+            trid ++;
+
+            totalsum();
+
+        });
+
+
+
+        /for delete/
+
+        function getSelectedRows() {
+            $('input[type=checkbox]').each(function(){
+                if ($(this).is(":checked")) {
+                    $(this).parent().parent().remove();
+                  }
+            });
+           }
+
+
+
+        /for edit/
+        function edit() {
+            var checkboxes = 0;
+            $('input[type=checkbox]').each(function () {
+                if ($(this).is(":checked")) {
+                    checkboxes ++;
+                }
+            });
+
+
+            if (checkboxes > 1) {
+               alert("Please select only one 1");
+                return false;
+            }
+            $("table > tbody > tr").each(function () {
+                if ($(this).find(".checkBoxClass").is(":checked")) {
+
+                    var name = $(this).find("td").eq(1).text();
+                    var qty = $(this).find("td").eq(2).text();
+                    var price = $(this).find("td").eq(3).text();
+                    var email = $(this).find("td").eq(4).text();
+
+
+                    $("#name1").val(name);
+                    $("#qty1").val(parseInt(qty));
+                    $("#price1").val(parseInt(price));
+                    $("#email1").val(email);
+
+                    $("#submit1").hide();
+                    $("#update1").show();
+
+
+                    $("#ModalLoginForm").modal("show");
+                }
+            });
+        }
+
+        /for update/
+
+
+        function updatedata() {
+
+            $("table > tbody > tr").each(function () {
+                if ($(this).find(".checkBoxClass").is(":checked")) {
+
+                        var nameupdate = $("#name1").val();
+                        var qtyupdate = $("#qty1").val();
+                        var priceupdate = $("#price1").val();
+                    var emailupdate = $("#email1").val();
+                    var totalprice = parseInt(qtyupdate) * parseInt(priceupdate);
+
+                        $(this).find("td").eq(1).text(nameupdate);
+                        $(this).find("td").eq(2).text(qtyupdate);
+                        $(this).find("td").eq(3).text(priceupdate);
+                    $(this).find("td").eq(4).text(emailupdate);
+                    $(this).find("td").eq(5).text(totalprice);
+
+
+                }
+            });
+
+            totalsum();
+
+        }
+
+        /total price/
+
+        function totalsum() {
+            var total = 0;
+            var qty = 0;
+            var price = 0;
+           $("table > tbody > tr").each(function () {
+
+               total += parseInt($(this).find("td").eq(5).text());
+               qty += parseInt($(this).find("td").eq(2).find("input").val());
+               price += parseInt($(this).find("td").eq(3).find("input").val());
+
+              /*  $(this).find("td").eq(1).text();*/
+            });
+
+            $("td#totalqty1").text(qty);
+            $("td#totalprice1").text(price);
+            $("td#totaltotalprice").text(total);
+        }</script>
+
+</body>
+</html>
